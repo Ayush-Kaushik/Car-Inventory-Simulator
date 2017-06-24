@@ -6,6 +6,8 @@ typedef struct Car
     int returnDate;
     int mileCar;
     char * numPlate;
+    struct Car * next;
+
 } Car;
 
 typedef struct file
@@ -29,5 +31,13 @@ void freeFiles(File * files);
 
 void getData(FILE * rentFile, FILE * availableFile, FILE * repairFile);
 
-void storeFile(FILE * openFile);
+void storeFile(FILE * openFile, int ListType);
+
+char * checkPlate(char * value);
+
+int checkDate(char * value);
+
+int checkMileage(char * value);
+
+Car * createNode(char * plate, int date, int mileage);
 #endif

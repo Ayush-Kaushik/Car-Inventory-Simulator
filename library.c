@@ -9,7 +9,6 @@
 //ASK CO-OP COUNCELLER IF I COULD UPLOAD THIS FILE AS A GITHUB PROJECT
 //FINISH THIS AND THEN MAKE THE CODE MORE COMPACT IN SECOND VERSION -- CREATE A NEW BRANCH OF THIS INFORMATION
 
-
 int main(int argc, char const *argv[])
 {
     mainProgram(argc, argv);
@@ -42,17 +41,86 @@ void openFiles(File * names)
 
 void getData(FILE * rentFile, FILE * availableFile, FILE * repairFile)
 {
-    storeFile(rentFile);
-    storeFile(availableFile);
-    storeFile(repairFile); //need to store values inside structs and return a linked list of those
+
+    int List1 = 0;
+    int List2 = 1;
+    int List3 = 2;
+
+    storeFile(rentFile, List1);
+    storeFile(availableFile, List2);
+    storeFile(repairFile, List3); //need to store values inside structs and return a linked list of those
 }
 
-void storeFile(FILE * openFile)
+void storeFile(FILE * openFile, int ListType) //to store the files in a certain way just pass in values as parameters and then based on that just organise your linked list
 {
+
+
+    printf("LIST NUMBER: %d\n", ListType);
     char storeVal[100] = {0};
+    char * plateNumber; //this will have a malloced value of the plate number
+    int returnDate;
+    int mileage;
+
+    int count = 0; //this is to check up which value has been sent in -- if 1 then plateNumber, if 2 then mieage, if 3 then return date
+
+
+    char value[100] = {0}; //this will store the strings one by one
+    int t = 0; //this is for iteration
+
+
+
+    Car * list = NULL; //this will store the linked list
+
     while(fgets(storeVal, 100, openFile) != NULL)
     {
-        printf("%s", storeVal);
+        count = 0;
+        t = 0;
+        for(int i = 0; i < strlen(storeVal); i++)
+        {
+            if(storeVal[i] != ',' && storeVal[i] != '\n')
+            {
+                value[t] = storeVal[i];
+                t++;
+            }
+
+            else
+            {
+                t = 0;
+                switch(count)
+                {
+                    case 0:
+                        plateNumber = checkPlate(value);
+                        // printf("plate number: %s", plateNumber);
+                         //remove this free statement and move it to another place in the code
+                        //a function that will check and return the plate number
+                        break;
+
+                    case 1:
+                        //a function that will check the date and return it in integer format
+                        returnDate = checkDate(value);
+                        // printf("return date: %d", returnDate);
+                        break;
+
+                    case 2:
+                        //a function that will check the mileage and return it
+                        mileage = checkMileage(value);
+                        //printf("Mileage: %d\n", mileage);
+                    break;
+
+                }
+                count++;
+                memset(value, 0, strlen(value));
+            }
+        }
+
+        Car * data_node = createNode(plateNumber, returnDate, mileage);
+        printf("Plate: %s, Date: %d, Mileage: %d\n", data_node->numPlate, data_node->returnDate, data_node->mileCar);
+
+
+        //based on the list type, simply organize the list
+
+
+        //create a loading animation on terminal when the file is being loaded
     }
 
     //close the file here.
@@ -62,6 +130,48 @@ void storeFile(FILE * openFile)
 
     //this will create a list and return the link of that list
     //it won't be void anymore, after doing that I will use the three linked lists to run my main program
+}
+
+
+Car * createNode(char * plate, int date, int mileage)
+{
+    Car * node = malloc(sizeof(Car));
+    node->numPlate = malloc(sizeof(char) * strlen(plate));
+    strcpy(node->numPlate, plate);
+    free(plate);
+
+    node->returnDate = date;
+    node->mileCar = mileage;
+
+    return node;
+}
+
+
+char * checkPlate(char * value)
+{
+    //check for malloc, if it is returned properly
+
+    //add the logic here to check if the value returned is correct
+
+    char * string = malloc(sizeof(char) * strlen(value));
+    strcpy(string, value);
+    return string;
+}
+
+
+int checkDate(char * value)
+{
+    //add logic here to check if the date is not a non-alphabetcal character
+
+    int date = atoi(value);
+    return date;
+}
+
+
+int checkMileage(char * value)
+{
+    int miles = atoi(value);
+    return miles;
 }
 
 void freeFiles(File * files)
