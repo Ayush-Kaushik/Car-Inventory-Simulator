@@ -5,17 +5,11 @@
 #include <stdbool.h>
 #include "include.h"
 
-//OKAY FIRST TRY TO MAKE STRUCTS OUT OF CAR INFORMATION
-//ASK CO-OP COUNCELLER IF I COULD UPLOAD THIS FILE AS A GITHUB PROJECT
-//FINISH THIS AND THEN MAKE THE CODE MORE COMPACT IN SECOND VERSION -- CREATE A NEW BRANCH OF THIS INFORMATION
-
 int main(int argc, char const *argv[])
 {
     mainProgram(argc, argv);
     return 0;
 }
-
-//Close the files -> I dont need list types since I already have three lists and they will be stored in eahc list seperately.
 
 void mainProgram(int argc, char const *argv[])
 {
@@ -46,15 +40,14 @@ void getData(FILE * rentFile, FILE * availableFile, FILE * repairFile)
     int List2 = 1;
     int List3 = 2;
 
-    storeFile(rentFile, List1);
-    storeFile(availableFile, List2);
-    storeFile(repairFile, List3); //need to store values inside structs and return a linked list of those
+    Car * rentList = storeFile(rentFile, List1);
+    Car * availableList = storeFile(availableFile, List2);
+    Car * repairList = storeFile(repairFile, List3); //need to store values inside structs and return a linked list of those
+    operations(rentList, availableList, repairList);
 }
 
-void storeFile(FILE * openFile, int ListType) //to store the files in a certain way just pass in values as parameters and then based on that just organise your linked list
+Car * storeFile(FILE * openFile, int ListType) //to store the files in a certain way just pass in values as parameters and then based on that just organise your linked list
 {
-
-
     printf("LIST NUMBER: %d\n", ListType);
     char storeVal[100] = {0};
     char * plateNumber; //this will have a malloced value of the plate number
@@ -63,11 +56,8 @@ void storeFile(FILE * openFile, int ListType) //to store the files in a certain 
 
     int count = 0; //this is to check up which value has been sent in -- if 1 then plateNumber, if 2 then mieage, if 3 then return date
 
-
     char value[100] = {0}; //this will store the strings one by one
     int t = 0; //this is for iteration
-
-
 
     Car * list = NULL; //this will store the linked list
 
@@ -114,22 +104,16 @@ void storeFile(FILE * openFile, int ListType) //to store the files in a certain 
         }
 
         Car * data_node = createNode(plateNumber, returnDate, mileage);
-        printf("Plate: %s, Date: %d, Mileage: %d\n", data_node->numPlate, data_node->returnDate, data_node->mileCar);
+        // printf("Plate: %s, Date: %d, Mileage: %d\n", data_node->numPlate, data_node->returnDate, data_node->mileCar);
 
-
-        //based on the list type, simply organize the list
-
-
+        list = organizeList(list, data_node);
         //create a loading animation on terminal when the file is being loaded
     }
 
-    //close the file here.
+    printList(list);
+    return list;
 
-
-    //create a special loop that will test the file on the spot and write out which values cannot be stored.
-
-    //this will create a list and return the link of that list
-    //it won't be void anymore, after doing that I will use the three linked lists to run my main program
+    
 }
 
 
@@ -142,8 +126,43 @@ Car * createNode(char * plate, int date, int mileage)
 
     node->returnDate = date;
     node->mileCar = mileage;
-
+    node->next = NULL;
+    node->prev = NULL;
     return node;
+}
+
+
+Car * organizeList(Car * list, Car * data_node)
+{
+
+    Car * temp = list; //this is another pointer to add values to the list
+    if(temp == NULL)
+    {
+        temp = data_node;
+        return temp;
+    }
+
+    while(temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+
+    temp->next = data_node;
+    data_node->prev = temp;
+    return list;
+}
+
+
+//do you want to write the output to a file?
+
+void printList(Car * list)
+{
+    Car * temp = list;
+    while(temp != NULL)
+    {
+        printf("Plate: %s, Date: %d, Mileage: %d\n", temp->numPlate, temp->returnDate, temp->mileCar);
+        temp = temp->next;
+    }
 }
 
 
