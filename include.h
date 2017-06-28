@@ -41,9 +41,12 @@ void freeFiles(File * files);
 
 void getData(FILE * rentFile, FILE * availableFile, FILE * repairFile);
 
-Car * storeFile(FILE * openFile, int ListType);
+Car * storeFile(FILE * openFile);
 
 char * checkPlate(char * value);
+char * getPlate();
+int getMiles();
+int checkDigit(char symbol);
 
 int checkDate(char * value);
 
@@ -72,12 +75,16 @@ Car * searchList(Car * list, Car * node); //This searches the list and returns t
 Car * Option2_3(Car * rentList);
 Car * Option4(Car * repairList);
 
-void Option5();
+Car * Option5(Car * rentList);
+Car * extractFirstCar(Car * rentList);
 
 
 void Option7();
+void freeList(Car * list);
 
 
+
+int mathOperator(char symbol);
 
 
 
