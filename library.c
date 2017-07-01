@@ -10,6 +10,7 @@
 void printList(Car * list)
 {
     Car * temp = list;
+<<<<<<< HEAD
 
     if(temp == NULL)
     {
@@ -41,11 +42,24 @@ void freeList(Car * list)
 }
 
 
+=======
+    while(temp != NULL)
+    {
+        printf("Plate: %s, Date: %d, Mileage: %d\n", temp->numPlate, temp->returnDate, temp->mileCar);
+        temp = temp->next;
+    }
+}
+
+
+>>>>>>> af78209b30bed2e453398a5823fc03c0bcd475a6
 int getMiles()
 {
     char input[100] = {0};
     int number = 0;
+<<<<<<< HEAD
 
+=======
+>>>>>>> af78209b30bed2e453398a5823fc03c0bcd475a6
 
     printf("Enter the mileage: ");
     fgets(input, 100, stdin);
@@ -55,7 +69,10 @@ int getMiles()
     do{
         for(int i = 0; i < strlen(value); i++)
         {
+<<<<<<< HEAD
 
+=======
+>>>>>>> af78209b30bed2e453398a5823fc03c0bcd475a6
             number = checkDigit(value[i]);
 
             if(number == -1)
@@ -78,9 +95,15 @@ int getMiles()
             fgets(input, 100, stdin);
             value = removeNewline(input);
         }
+<<<<<<< HEAD
 
     }while(number == -1);
 
+=======
+
+    }while(number == -1);
+
+>>>>>>> af78209b30bed2e453398a5823fc03c0bcd475a6
     number = atoi(value);
     return number;
 }
@@ -95,6 +118,60 @@ int checkDigit(char symbol)
     
     return -1;
 }
+
+
+<<<<<<< HEAD
+char * getPlate() //add logic to check for user input --this will return the plate itself after getting the user input
+{
+    char input[100] = {0}; //this will get the fgets input
+    int number = 0;
+
+    printf("Enter the plate number: ");
+    fgets(input, 100, stdin);
+    char * value = removeNewline(input);
+    printf("%s\n", value);
+    int length = strlen(value);
+
+    do
+    {
+        for(int i = 0; i < strlen(value); i++)
+        {
+            number = mathOperator(value[i]);
+
+            if(number == -1)
+            {
+                // printf("error\n");
+                break;
+            }
+            else
+            {
+                if(length == i)
+                {
+                    break;
+                }
+                else
+                {
+                    // printf("no-error\n");
+                    continue;
+                }
+            }
+        }
+
+        if(number == -1)
+        {
+            memset(input, 0, strlen(input));
+            printf("** Please enter alphabetic/ numeric values only **\n\n");
+            printf("Enter the plate number: ");
+            fgets(input, 100, stdin);
+            value = removeNewline(input);
+        }
+    }while(number == -1);
+        
+
+    char * string = malloc(sizeof(char) * (strlen(value) + 1));
+    strcpy(string, value);
+
+=======
 
 
 char * getPlate() //add logic to check for user input --this will return the plate itself after getting the user input
@@ -147,6 +224,7 @@ char * getPlate() //add logic to check for user input --this will return the pla
     char * string = malloc(sizeof(char) * (strlen(value) + 1));
     strcpy(string, value);
 
+>>>>>>> af78209b30bed2e453398a5823fc03c0bcd475a6
     return string;
 }
 
