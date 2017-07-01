@@ -5,92 +5,102 @@
 #include <stdbool.h>
 #include "include.h"
 
+//do each option 1 by one
+
 void operations(Car * rentList, Car * availableList, Car * repairList)
 {
     int option = 0;
     option = getOption();
     printf("User selected: %d\n", option);
-    Car * node = NULL;
 
-    while(option != 7)
+    Car * toBeAdded = NULL;
+
+    while(option != 8)
     {
         switch(option)
         {
             case 1:
-                printf("Add a new car to the available-for-rent list\n");
-                availableList = Option1(availableList);                
+                availableList = Option1(availableList);  //this doesn't leak memory and works fine.          
                 break;
 
             case 2:
-                printf("Add a returned car to the available-for-rent list\n");
-                node = Option2_3(rentList);
+                toBeAdded  = getCar();
+                Car * returnVal = searchList(rentList, toBeAdded);
 
-                if(node == NULL)
+                if(returnVal == NULL)
                 {
-                    printf("There is no car in that list that matches your request\n");
+                    printf("The node does not exist in this list -- rentList\n");
+                    break;
                 }
 
-                else
-                {
-                    availableList = organizeList(availableList, node);
-                }
+                Car * value = createCar(returnVal->numPlate, returnVal->returnDate, returnVal->mileCar);
+                availableList = organizeList(availableList, value);
+                rentList = removeNode(rentList, value);
                 break;
 
             case 3:
-                printf("Add a returned car to the repair list\n");
-                node = Option2_3(rentList);
+                toBeAdded = getCar();
+                Car * returnValue = searchList(rentList, toBeAdded);
 
-                if(node == NULL)
+                if(returnValue == NULL)
                 {
-                    printf("Cannot find the car in the rent list\n");
+                    printf("the node does not exist in this list -- rentList Option 3\n");
+                    break;
                 }
 
-                else
-                {
-                    repairList = organizeList(repairList, node);
-                    printf("New repairList:\n");
-                    printList(repairList);
-
-                }
+                Car * valueCar = createCar(returnValue->numPlate, returnValue->returnDate, returnValue->mileCar);
+                repairList = organizeList(repairList, valueCar);
+                rentList = removeNode(rentList, valueCar);
                 break;
 
             case 4:
-                printf("Transfer a car from the repair list to the available-for-rent list\n");
-                node = Option4(repairList);
+                toBeAdded = getCar();
+                printf("WORKS\n");
+                Car * returnValue2 = searchList(repairList, toBeAdded);
+                printf("WORKSX2\n");
 
-                if(node == NULL)
+                if(returnValue2 == NULL)
                 {
-                    printf("canno find your car in the repair list -- to transfer to available for rent list\n");
+                    printf("the node does not exist in this list -- rentList Option 3\n");
+                    break;
                 }
 
-                else
-                {
-                    availableList = organizeList(availableList, node);
-                    printf("New available for rent list: \n");
-                    printList(availableList);
-                }
+                Car * valueCar2 = createCar(returnValue2->numPlate, returnValue2->returnDate, returnValue2->mileCar);
+                availableList = organizeList(availableList, valueCar2);
+                repairList = removeNode(repairList, valueCar2);
                 break;
 
             case 5:
-                printf("Rent the first available car\n");
-                Option5();
+                toBeAdded = getFirstCar(availableList);
+                if(toBeAdded == NULL)
+                {
+                    printf("There is no car in the availableList\n");
+                    break;
+                }
+                Car * toBeRented = createCar(toBeAdded->numPlate, toBeAdded->returnDate, toBeAdded->mileCar);
+                rentList = organizeList(rentList, toBeRented);
+                availableList = removeNode(availableList, toBeRented);
                 break;
 
             case 6:
-                printf("THE AVAILABLE LIST\n");
+                printf("CARS AVAILABLE\n");
                 printList(availableList);
 
-                printf("THE RENT LIST\n");
+                printf("CARS RENTED\n");
                 printList(rentList);
 
-                printf("THE REPAIR LIST\n");
+                printf("CARS UNDER REPAIR\n");
                 printList(repairList);
                 break;
 
 
             case 7:
-                printf("Quit this program\n");
-                Option7();
+                printf("Quit simulator\n");
+                freeList(rentList);
+                freeList(availableList);
+                freeList(repairList);
+
+                Option7(); //need to free all the lists
                 break;
         }
 
@@ -99,161 +109,177 @@ void operations(Car * rentList, Car * availableList, Car * repairList)
     }
 }
 
+
+Car * getFirstCar(Car * list)
+{
+    Car * temp = list;
+
+    if(temp == NULL)
+    {
+        return NULL;
+    }
+
+    return temp;
+}
+
+
 int getOption()
 {
     char userInput[100] = {0};
     int option = 0;
 
-    do{
-        printf("Select user input: ");
+    printf("\n\nTASKS\n");
+    printf("  (1) add a new car to the available-for-rent list\n");
+    printf("  (2) Add a returned car to the available-for-rent list\n");
+    printf("  (3) add a returned car to the repair list\n");
+    printf("  (4) Transfer a car from the repair list to the available-for-rent list\n");
+    printf("  (5) rent the first available car\n");
+    printf("  (6) Print all the lists\n");  
+    printf("  (7) quit\n");
+
+    do
+    {
+        printf("Option: ");
         fgets(userInput, 100, stdin);
         char * input = removeNewline(userInput);
         option = atoi(input);
         memset(userInput, 0, strlen(userInput));
     } while(option <= 0 || option >= 8);
+
     return option;
 }
 
+
+
 Car * Option1(Car * availableList)
 {
-    Operation_type  createCar  = op_1;
-    Car * car_node = getCar(createCar, availableList); // need to take care of the NULL values
-
+    printf("Make new car available to rent\n");
+    Car * car_node = getCar();
     availableList = organizeList(availableList, car_node);
-    printList(availableList);
+    printf("Added new car\n");
     return availableList;
 }
 
-Car * Option2_3(Car * rentList)
-{
-    Operation_type  returnCar  = op_2;
-    Car * node = getCar(returnCar, rentList); //this is the option to run second loop
 
-    //here I am supposed to get the car value and search the linked list.
-    //then return this node. -- make the date equal to -1 because now the car is ready to be sent out for renting again
-
-    if(node == NULL)
-    {
-        printf("The node returned is NULL, hence the car is not present");
-    }
-
-    return node;
-}
-
-Car * Option4(Car * repairList)
-{
-    printf("SELECTED :::: Transfer a car from the repair list to the available-for-rent list\n");
-
-    Operation_type availableCar = op_2;
-    Car * node = getCar(availableCar, repairList);
-
-    if(node == NULL)
-    {
-        printf("The car requested for transfer does not exist in the list\n");
-    }
-
-    return node;
-}
-
-
-Car * getCar(Operation_type x, Car * list_type) //this gets the user input and returns the value --based on the type of operation chosen by the user
-{
-    char input[100] = {0};
-    char * value;
-    char * plateNumber;
-    char * mileageValue;
-    int mileage = 0;
-    int date = -1;
-    Car * node = NULL;
-    Car * createdEntry = NULL;
-    Car * temp = list_type;
-
-    printf("Enter the plate number: ");
-    fgets(input, 100, stdin);
-    value = removeNewline(input);
-    plateNumber = checkPlate(value);
-
-    printf("Enter the mileage: ");
-    fgets(input, 100, stdin);
-    mileageValue = removeNewline(input);
-    mileage = checkMileage(mileageValue);
-    memset(input, 0, strlen(input));
-
-
-    if(x == op_1)
-    {
-        node = createNode(plateNumber, date, mileage);
-    }
-
-    if(x == op_2)
-    {
-        //SEARCH AND RETURN THE NODE HERE
-        createdEntry = createNode(plateNumber, date, mileage);
-        node = searchList(temp, createdEntry);
-        printf("Option2: %s %d %d\n", node->numPlate, node->mileCar, node->returnDate);
-    }
-
-
-    return node;
-}
-
-
-//This will search the list and return the pointer to the car that has to be moved to the list
-Car * searchList(Car * list, Car * node)
+Car * removeNode(Car * list, Car * toBeRemoved)
 {
     Car * temp = list;
-    Car * foundCar = NULL;
+
     if(temp == NULL)
     {
-        printf("The list is empty\n");
-        // return NULL;
+        printf("List is empty");
+        return NULL;
     }
 
-    while(temp->next != NULL)
+
+    while(temp != NULL)
     {
-        if((strcmp(temp->numPlate, node->numPlate) == 0) && (temp->mileCar == node->mileCar))
+        if(strcmp(toBeRemoved->numPlate, temp->numPlate) == 0 && (toBeRemoved -> mileCar == temp->mileCar))
         {
-
-            printf("Found a car in the list\n");
-            foundCar = temp;
+            printf("Found Car to be removed\n");
             break;
+            
+        }
+        temp = temp->next;
+    }
 
-            //return NULL; //change this into an actual value
+            if(temp->next == NULL && temp->prev == NULL) //when list only has one node
+            {
+                printf("Entered only one node\n");
+                printList(temp);
+                freeList(temp);
+                list = NULL;
+            }
+
+            else if(temp->next != NULL && temp->prev != NULL) //middle of the list
+            {
+                temp->next->prev = temp->prev;
+                temp->prev->next = temp->next;
+
+                freeNode(temp);
+            }
+
+            else if(temp->next != NULL && temp->prev == NULL) //front of the list
+            {
+                printf("Removing from the front of node:\n");
+                list->next->prev = NULL;
+                list = list->next;  
+                freeNode(temp);              
+            }
+
+            else if(temp->next == NULL && temp->prev != NULL) //at the end of the list
+            {
+                temp->prev->next = NULL;
+                freeNode(temp);
+            }
+
+    return list;
+}
+
+Car * searchList(Car * list, Car * node) //This searches the list and returns a pointer to the node
+{
+    Car * temp = list;
+    Car * findNode = NULL;
+
+    while(temp != NULL)
+    {
+        if(strcmp(node->numPlate, temp->numPlate) == 0 && (node -> mileCar == temp->mileCar))
+        {
+            printf("Found Car\n");
+            findNode = temp;
+            freeNode(node);
+            return findNode;
         }
 
         temp = temp->next;
     }
 
-    if(foundCar != NULL)
-    {
-        printf("foundCar: %s %d %d\n", foundCar->numPlate, foundCar->mileCar, foundCar->returnDate);
-        printf("the car before foundCar: %s %d %d\n",foundCar->prev->numPlate, foundCar->prev->mileCar, foundCar->prev->returnDate);
 
-        //now simply remove that car and join the linked list
+    return NULL;
+}
 
-        foundCar->prev->next = foundCar->next;
-        foundCar->next->prev = foundCar->prev;
 
-        foundCar->next = NULL;
-        foundCar->prev = NULL;
-    }    
-    return foundCar;
+void freeNode(Car * node)
+{
+    free(node->numPlate);
+    free(node);
+}
+
+Car * createCar(char * plate, int date, int mileage)
+{
+    Car * node = malloc(sizeof(Car));
+    node->numPlate = malloc(sizeof(char) * (strlen(plate) + 1));
+    strcpy(node->numPlate, plate);
+
+    node->returnDate = date;
+    node->mileCar = mileage;
+    node->next = NULL;
+    node->prev = NULL;
+
+    return node;
 }
 
 
 
-void Option5()
+Car * getCar() //this gets the user input and returns the value --based on the type of operation chosen by the user
 {
-    printf("SELECTED :::: Rent the first available car\n");
-    return;
+    char * plateNumber;
+    int mileage = 0;
+    int date = -111111;
+    plateNumber = getPlate();
+    mileage = getMiles();
+    Car * node = createNode(plateNumber, date, mileage);
+    return node;
 }
 
 
 void Option7()
 {
     printf("SELECTED :::: Quit this program\n");
+    exit(1);
     return;
 }
+
 
 
 

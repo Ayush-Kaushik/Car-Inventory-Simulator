@@ -19,14 +19,6 @@ typedef struct file
 } File;
 
 
-typedef enum Operation_type
-{
-    op_1 = 1,
-    op_2 = 2,
-    op_3 = 3,
-    op_4 = 4
-} Operation_type;
-
 void mainProgram(int argc, char const *argv[]);//this will run the main program
 
 File * getInput(); //get user input
@@ -41,9 +33,12 @@ void freeFiles(File * files);
 
 void getData(FILE * rentFile, FILE * availableFile, FILE * repairFile);
 
-Car * storeFile(FILE * openFile, int ListType);
+Car * storeFile(FILE * openFile);
 
 char * checkPlate(char * value);
+char * getPlate();
+int getMiles();
+int checkDigit(char symbol);
 
 int checkDate(char * value);
 
@@ -65,19 +60,19 @@ int getOption();
 //----- IN PROGRAM OPTIONS ------
 
 Car * Option1(Car * availableList);
-Car * getCar(Operation_type x, Car * list_type);
-
-Car * searchList(Car * list, Car * node); //This searches the list and returns the node
-
-Car * Option2_3(Car * rentList);
-Car * Option4(Car * repairList);
-
-void Option5();
-
+Car * getCar();
+Car * searchList(Car * list, Car * node);
+Car * createCar(char * plate, int date, int mileage);
+void freeNode(Car * node);
+Car * removeNode(Car * list, Car * toBeRemoved);
+Car * getFirstCar(Car * list);
 
 void Option7();
+void freeList(Car * list);
 
 
+
+int mathOperator(char symbol);
 
 
 
