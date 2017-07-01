@@ -10,6 +10,13 @@
 void printList(Car * list)
 {
     Car * temp = list;
+
+    if(temp == NULL)
+    {
+        return;
+    }
+
+
     while(temp != NULL)
     {
         printf("Plate: %s, Date: %d, Mileage: %d\n", temp->numPlate, temp->returnDate, temp->mileCar);
@@ -17,11 +24,28 @@ void printList(Car * list)
     }
 }
 
+void freeList(Car * list)
+{
+    printf("This works\n");
+    Car * temp = list;
+
+    while(temp != NULL)
+    {
+        Car * temp2 = temp;
+        temp = temp->next;
+        free(temp2->numPlate);
+        free(temp2);
+     }
+
+     free(temp);
+}
+
 
 int getMiles()
 {
     char input[100] = {0};
     int number = 0;
+
 
     printf("Enter the mileage: ");
     fgets(input, 100, stdin);
@@ -31,6 +55,7 @@ int getMiles()
     do{
         for(int i = 0; i < strlen(value); i++)
         {
+
             number = checkDigit(value[i]);
 
             if(number == -1)
@@ -70,8 +95,6 @@ int checkDigit(char symbol)
     
     return -1;
 }
-
-
 
 
 char * getPlate() //add logic to check for user input --this will return the plate itself after getting the user input

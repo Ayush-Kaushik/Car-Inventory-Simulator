@@ -84,7 +84,6 @@ char * checkPlate(char * value)
 {
     int number = 0;
     int length = strlen(value);
-//-------------------------------------------
 
     for(int i = 0; i < strlen(value); i++)
         {
@@ -111,9 +110,6 @@ char * checkPlate(char * value)
         {
             return NULL;
         }
-
-
-//--------------------------------------------
 
         char * string = malloc(sizeof(char) * (strlen(value) + 1));
         strcpy(string, value);
